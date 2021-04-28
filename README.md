@@ -17,11 +17,10 @@ Relevent resources that are used for the captive portal design:
 * Flask - lightweight web framework
 
 To install this in Fedora. We do not want firewalld
-<code>
-sudo dnf mark install nftables
-sudo dnf remove firewalld
-sudo dnf install dhcp
-</code>
+
+    sudo dnf mark install nftables
+    sudo dnf remove firewalld
+    sudo dnf install dhcp
 
 ## Forward in Linux kernel
 
@@ -29,9 +28,8 @@ Enable ipv4 forward change this file: /etc/sysctl.conf
 
 And add this:
 
-<code>
-net.ipv4.ip_forward = 1
-</code>
+    net.ipv4.ip_forward = 1
+
 
 Why? For NAT to work we need to be able to forwards packages and make this machine work as a router. If not the server will not forward packages (default behavior in Linux) and there would be no internet connection in the captive portal, only a login page.
 
@@ -39,8 +37,8 @@ Source: https://docs.fedoraproject.org/en-US/Fedora/18/html/Security_Guide/sect-
 
 ## Enable services
 
-<code>
-sudo systemctl enable --now nftables
-sudo systemctl enable --now nginx
-sudo systemctl enable --now dhcpd
-</code>
+
+    sudo systemctl enable --now nftables
+    sudo systemctl enable --now nginx
+    sudo systemctl enable --now dhcpd
+
