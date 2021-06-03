@@ -94,7 +94,7 @@ def login_now():
 
     # Make string to save in log file username + vlan id?
     # TODO Add timezone to timestamp. For now it is as system time
-    save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "," + username + "," + interface_to_open "," + request.remote_addr "," + user_response.json()['results'][0]['vlan']
+    save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "," + username + "," + interface_to_open + "," + request.remote_addr + "," + user_response.json()['results'][0]['vlan']
 
     # Save this string to log file
     log_file = open('/var/log/pop-captive-access.log', 'a')
@@ -103,7 +103,7 @@ def login_now():
 
     # TODO Read log again to be sure it was written correctly
     # Call nft command with sudo to open that network
-    os.system("nft 'add element captive open_interfaces { " + interface_to_open + " }'"
+    os.system("nft 'add element captive open_interfaces { " + interface_to_open + " }'")
 
     # Show success message for login, redirect to https://pop.dk/
     return render_template('valid-login-redirect.html',

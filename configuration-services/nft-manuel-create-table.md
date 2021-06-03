@@ -67,3 +67,5 @@ Here is an example of how to open one interface kitchen_a for 8 hours (because t
 
     nft 'add element captive open_interfaces { kitchen_a }'
 
+
+Lastly remember to use similar commands for the server table to protect the server running the captive portal. See the rules in the nftables.conf file.
