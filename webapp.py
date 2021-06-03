@@ -15,13 +15,13 @@ def inject_now():
 
 # Check hostname. If wrong send 511 for login required
 # TODO: Do not send 511 if user is logged in
-# TODO: Not hardcode captive.pop.dk
 @app.before_request
 def before_request():
     o = urlparse(request.base_url)
     host = o.hostname
-    if o.hostname != 'captive.pop.dk':
-        return render_template('login-required-redirect.html'), 511
+    if o.hostname != captive_hostname:
+        return render_template('login-required-redirect.html',
+            redirect_host=captive_scheme + "://" + captive_hostname + "/"), 511
 
 
 # Show login form
