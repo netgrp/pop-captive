@@ -4709,9 +4709,98 @@
             .sydney-hero-area {
                 overflow: hidden
             }
+
+/* Font Family:  ;Source Sans Pro:400,400italic,600|Raleway:400,500,600 */
+/* https://google-webfonts-helper.herokuapp.com/fonts/raleway?subsets=cyrillic,cyrillic-ext,latin,latin-ext,vietnamese */
+/* https://google-webfonts-helper.herokuapp.com/fonts/source-sans-pro?subsets=cyrillic,cyrillic-ext,greek,greek-ext,latin,latin-ext,vietnamese */
+
+/* source-sans-pro-regular - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-regular.svg#SourceSansPro') format('svg'); /* Legacy iOS */
+}
+
+/* source-sans-pro-italic - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: italic;
+  font-weight: 400;
+  src: url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-italic.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-italic.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-italic.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-italic.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-italic.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-italic.svg#SourceSansPro') format('svg'); /* Legacy iOS */
+}
+
+/* source-sans-pro-600 - vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 600;
+  src: url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-600.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-600.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-600.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-600.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-600.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/source-sans-pro-v14-vietnamese_latin-ext_latin_greek-ext_greek_cyrillic-ext_cyrillic-600.svg#SourceSansPro') format('svg'); /* Legacy iOS */
+}
+
+/* raleway-regular - vietnamese_latin-ext_latin_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-regular.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-regular.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-regular.svg#Raleway') format('svg'); /* Legacy iOS */
+}
+
+/* raleway-500 - vietnamese_latin-ext_latin_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 500;
+  src: url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-500.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-500.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-500.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-500.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-500.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-500.svg#Raleway') format('svg'); /* Legacy iOS */
+}
+
+/* raleway-600 - vietnamese_latin-ext_latin_cyrillic-ext_cyrillic */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 600;
+  src: url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-600.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-600.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-600.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-600.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-600.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/raleway-v19-vietnamese_latin-ext_latin_cyrillic-ext_cyrillic-600.svg#Raleway') format('svg'); /* Legacy iOS */
+}
+
+
         </style>
         <title>Captive Portal - P. O. Pedersen Kollegiet</title>
-        <link rel='stylesheet' id='sydney-fonts-css' href='https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A400%2C400italic%2C600%7CRaleway%3A400%2C500%2C600' type='text/css' media='all'/>
         <style id='sydney-style-inline-css' type='text/css'>
             .site-title {
                 font-size: 32px;
@@ -4846,7 +4935,7 @@
         </style>
         <style type="text/css">
             .header-image {
-                background-image: url(https://pop.dk/wp-content/uploads/2017/08/cropped-Panorama.jpg);
+                background-image: url(/img/cropped-Panorama.jpg);
                 display: block;
             }
 
@@ -4861,10 +4950,8 @@
                 }
             }
         </style>
-        <link rel="icon" href="https://pop.dk/wp-content/uploads/2017/08/cropped-icon-32x32.png" sizes="32x32"/>
-        <link rel="icon" href="https://pop.dk/wp-content/uploads/2017/08/cropped-icon-192x192.png" sizes="192x192"/>
-        <link rel="apple-touch-icon-precomposed" href="https://pop.dk/wp-content/uploads/2017/08/cropped-icon-180x180.png"/>
-        <meta name="msapplication-TileImage" content="https://pop.dk/wp-content/uploads/2017/08/cropped-icon-270x270.png"/>
+        <link rel="icon" href="/img/cropped-icon-32x32.png" sizes="32x32"/>
+        <link rel="icon" href="/img/cropped-icon-192x192.png" sizes="192x192"/>
         <style type="text/css" id="wp-custom-css">
 
             .site-title a:link, .site-title a:visited , .site-title a:hover, .site-title a:active, .slide-inner a:link, .slide-inner a:visited {
@@ -4918,7 +5005,7 @@
             <div class="sydney-hero-area">
                 <div class="header-image">
                     <div class="overlay"></div>
-                    <img class="header-inner" src="https://pop.dk/wp-content/uploads/2017/08/cropped-Panorama.jpg" width="1920" alt="P. O. Pedersen Kollegiet" title="P. O. Pedersen Kollegiet">
+                    <img class="header-inner" src="/img/cropped-Panorama.jpg" width="1920" alt="P. O. Pedersen Kollegiet" title="P. O. Pedersen Kollegiet">
                 </div>
             </div>
             <div id="content" class="page-wrap">
