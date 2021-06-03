@@ -64,7 +64,7 @@ def login_now():
             )
 
     # Perform the hashing with the given password and the salt from k-net
-    hash_result = sha1(bytes(pwd_parts[1]+password, 'utf-8')).hexdigest()
+    hash_result = hashlib.sha1(bytes(pwd_parts[1]+password, 'utf-8')).hexdigest()
 
     # Check aginst the salt+hash stored at K-Net
     # If not OK: Stop here
@@ -94,7 +94,7 @@ def login_now():
 
     # Make string to save in log file username + vlan id?
     # TODO Add timezone to timestamp. For now it is as system time
-    save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "," + username + "," + interface_to_open + "," + request.remote_addr + "," + user_response.json()['results'][0]['vlan']
+    save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "," + username + "," + interface_to_open + "," + request.remote_addr + "," + user_response.json()['results'][0]['vlan'] + "\n"
 
     # Save this string to log file
     log_file = open('/var/log/pop-captive-access.log', 'a')
