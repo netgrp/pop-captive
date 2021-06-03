@@ -49,7 +49,8 @@ def login_now():
     # If more then we cannot check password correctly.
     if user_response.json()['count'] != 1:
         return render_template('invalid-login.html',
-            title="Captive portal login failed"
+            title="Captive portal login failed",
+            retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
     # Get password to compare. First result contain password with salt
@@ -61,7 +62,8 @@ def login_now():
     # We check that sha1 was used. If not we cannot check the password
     if pwd_parts[0] != 'sha1':
         return render_template('invalid-login.html',
-            title="Captive portal login failed"
+            title="Captive portal login failed",
+            retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
     # Perform the hashing with the given password and the salt from k-net
@@ -72,7 +74,8 @@ def login_now():
     if hash_result != pwd_parts[2]:
         # Reject if login is invalid
         return render_template('invalid-login.html',
-            title="Captive portal login failed"
+            title="Captive portal login failed",
+            retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
     # If we are here we have a valid login. Let us open the internet!
@@ -87,7 +90,8 @@ def login_now():
     if match_ip_to_interface < 0 or match_ip_to_interface >= len(interfaces):
         # Reject because of invalid interface id
         return render_template('invalid-login.html',
-            title="Captive portal login failed"
+            title="Captive portal login failed",
+            retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
     # Inteface to open is:
