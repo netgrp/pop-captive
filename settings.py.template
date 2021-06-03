@@ -29,3 +29,7 @@ interfaces[25] = "multiroom"
 knet_api_base_url = "https://api.k-net.dk/v2/"
 knet_api_username = 
 knet_api_password = 
+
+# HTTP / HTTPS login site and hostname
+captive_scheme = "https"
+captive_hostname = "captive.your.tld"
