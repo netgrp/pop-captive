@@ -1,0 +1,17 @@
+# POP Captive Portal service
+# To be located at /etc/systemd/system/pop-captive.service
+# Remember to set passwords for K-Net API here.
+
+[Unit]
+Description=Gunicorn instance to serve pop-captive
+After=network.target
+
+[Service]
+User=user
+Group=nginx
+WorkingDirectory=/opt/pop-captive
+Environment="PATH=/opt/pop-captive/pop-captiveenv/bin KNET_API_USERNAME= KNET_API_PASSWORD="
+ExecStart=/opt/pop-captive/pop-captiveenv/bin/gunicorn --workers 3 --bind unix:pop-captive.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target

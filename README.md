@@ -15,12 +15,14 @@ Relevent resources that are used for the captive portal design:
 * isc-dhcp-server - DHCP server
 * nginx - webserver proxy front end
 * Flask - lightweight web framework
+* Gunicon - WSGI middle layer between nginx and flask. Used to deploy flask in production. Via pip for virtualenv to work correctly
+* Certbot and certbot plugin for nginx for SSL certificate to make https work
 
 To install this in Fedora. We do not want firewalld
 
     sudo dnf mark install nftables
     sudo dnf remove firewalld
-    sudo dnf install dhcp
+    sudo dnf install dhcp nginx certbot certbot-nginx
 
 ## Forward in Linux kernel
 
@@ -41,4 +43,16 @@ Source: https://docs.fedoraproject.org/en-US/Fedora/18/html/Security_Guide/sect-
     sudo systemctl enable --now nftables
     sudo systemctl enable --now nginx
     sudo systemctl enable --now dhcpd
+    sudo systemctl enable --now certbot-renew.timer
 
+## Set environment variables (Should be possible in the .service file for Gunicorn 3)
+
+    KNET_API_USERNAME=
+    KNET_API_PASSWORD=
+
+
+https://flask.palletsprojects.com/en/2.0.x/config/#configuring-from-environment-variables
+
+## Prepare python
+
+    sudo pip install virtualenv 
