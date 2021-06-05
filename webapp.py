@@ -56,15 +56,16 @@ app = Flask(__name__)
 def inject_now():
     return {'now': datetime.utcnow()}
 
-# Check hostname. If wrong send 511 for login required
-# Check for private IP. Only show captive portal on the inside of our network
+
 # TODO: Do not send 511 if user is logged in
-# TODO: Do not show captive portal login page from public IP's
 # X-Real-IP is because of proxy. This application will always use the same proxy so no need to check anything else
 @app.before_request
 def before_request():
+    # Check for private IP. Only show captive portal on the inside of our network
     if ipaddress.ip_address(request.headers['X-Real-IP']).is_private == False:
         return render_template('public-ip.html')
+
+    # Check hostname. If wrong send 511 for login required
     o = urlparse(request.base_url)
     host = o.hostname
     if o.hostname != captive_hostname:
@@ -102,6 +103,7 @@ def login_now():
     # There should only be one response.
     # If less then no user was found.
     # If more then we cannot check password correctly.
+    # TODO Handle lack of ['count'] key in a graceful way
     if user_response.json()['count'] != 1:
         return render_template('invalid-login.html',
             title="Captive portal login failed Code:#2",
@@ -133,6 +135,7 @@ def login_now():
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
+    # TODO: Use https://docs.python.org/3/library/ipaddress.html instead of regex here
     # If we are here we have a valid login. Let us open the internet!
     # Check what vlan we are on from the IP address 172.16.2xx.yyy
     # We need to capture xx as this is the index for that vlan in our settings.py
@@ -155,7 +158,7 @@ def login_now():
 
     # Make string to save in log file username + vlan id?
     # TODO Add timezone to timestamp. For now it is as system time
-    save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "," + username + "," + interface_to_open + "," + request.remote_addr + "," + user_response.json()['results'][0]['vlan'] + "\n"
+    save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "," + username + "," + interface_to_open + "," + request.headers['X-Real-IP'] + "," + user_response.json()['results'][0]['vlan'] + "\n"
 
     # Save this string to log file
     log_file = open('/var/log/pop-captive-access.log', 'a')

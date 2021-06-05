@@ -1,5 +1,6 @@
 # POP Captive portal nginx configuration
 # To be located at: /etc/nginx/sites-available/pop-captive
+# https://docs.gunicorn.org/en/stable/deploy.html
 
 server {
     listen 80;
