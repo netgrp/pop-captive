@@ -16,13 +16,15 @@ Relevent resources that are used for the captive portal design:
 * nginx - webserver proxy front end
 * Flask - lightweight web framework
 * Gunicon - WSGI middle layer between nginx and flask. Used to deploy flask in production. Via pip for virtualenv to work correctly
-* Certbot and certbot plugin for nginx for SSL certificate to make https work
+* Certbot - and certbot plugin for nginx for SSL certificate to make https work
+* git - to download the appliaction and install updates easier
+* virtualenv - For the python flask application, to keep them in a "container".
 
 To install this in Fedora. We do not want firewalld
 
     sudo dnf mark install nftables
     sudo dnf remove firewalld
-    sudo dnf install dhcp nginx certbot certbot-nginx
+    sudo dnf install dhcp nginx certbot certbot-nginx git python3-virtualenv
 
 ## Forward in Linux kernel
 
@@ -53,6 +55,21 @@ Source: https://docs.fedoraproject.org/en-US/Fedora/18/html/Security_Guide/sect-
 
 https://flask.palletsprojects.com/en/2.0.x/config/#configuring-from-environment-variables
 
-## Prepare python
+## Make user for pop-captive flask application
 
-    sudo pip install virtualenv 
+    $ sudo useradd pop-captive
+    $ sudo usermod -aG wheel pop-captive
+
+## Getting the base files right
+
+    $ sudo mkdir -p /opt/pop-captive/
+    $ sudo chown -R pop-captive:pop-captive /opt/pop-captive/
+    $ cd /opt/pop-captive/
+    $ sudo su pop-captive
+    $ git clone https://github.com/eKristensen/pop-captive.git /opt/pop-captive
+
+## Prepare virtual environment (still as the pop-captive user) and install python packages (this includes flask, gunicorn)
+
+    $ virtualenv pop-captive-venv
+    $ source pop-captive-venv/bin/activate
+    $ pip install -r requirements.txt

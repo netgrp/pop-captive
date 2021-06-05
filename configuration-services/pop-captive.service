@@ -7,11 +7,11 @@ Description=Gunicorn instance to serve pop-captive
 After=network.target
 
 [Service]
-User=user
+User=pop-captive
 Group=nginx
 WorkingDirectory=/opt/pop-captive
-Environment="PATH=/opt/pop-captive/pop-captiveenv/bin KNET_API_USERNAME= KNET_API_PASSWORD="
-ExecStart=/opt/pop-captive/pop-captiveenv/bin/gunicorn --workers 3 --bind unix:pop-captive.sock -m 007 wsgi:app
+Environment="PATH=/opt/pop-captive/pop-captive-venv/bin KNET_API_USERNAME= KNET_API_PASSWORD="
+ExecStart=/opt/pop-captive/pop-captive-venv/bin/gunicorn --workers 3 --bind unix:pop-captive.sock -m 007 wsgi:app
 
 [Install]
 WantedBy=multi-user.target
