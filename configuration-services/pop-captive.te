@@ -1,0 +1,16 @@
+
+module pop-captive 1.0;
+
+require {
+	type httpd_t;
+	type unconfined_service_t;
+	type usr_t;
+	class sock_file write;
+	class unix_stream_socket connectto;
+}
+
+#============= httpd_t ==============
+allow httpd_t unconfined_service_t:unix_stream_socket connectto;
+
+#!!!! This avc is allowed in the current policy
+allow httpd_t usr_t:sock_file write;

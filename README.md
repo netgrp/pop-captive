@@ -73,3 +73,21 @@ https://flask.palletsprojects.com/en/2.0.x/config/#configuring-from-environment-
     $ virtualenv pop-captive-venv
     $ source pop-captive-venv/bin/activate
     $ pip install -r requirements.txt
+
+## Install service file for Gunicorn. Run as normal user with sudo rights
+
+    $ sudo cp /opt/pop-captive/configuration-services/pop-captive.service /etc/systemd/system/pop-captive.service
+    $ sudo systemctl enable --now pop-captive
+
+## Fix SELinux if required. It may block starting Gunicorn (permissiond denied error, confirm here with `ausearch -m avc -ts recent`)
+
+This includes the policy required in order to allow nginx to access the socket for Gunicorn.
+
+    $ sudo restorecon -R -v /opt/pop-captive/
+    $ cd /opt/pop-captive/configuration-services/
+    $ sudo semodule -i pop-captive.pp
+
+Relevant websites for SELinux:
+* https://command-not-found.com/audit2allow
+* https://docs.fedoraproject.org/en-US/Fedora/12/html/Security-Enhanced_Linux/sect-Security-Enhanced_Linux-Fixing_Problems-Allowing_Access_audit2allow.html
+* https://wiki.gentoo.org/wiki/SELinux/Tutorials/Creating_your_own_policy_module_file

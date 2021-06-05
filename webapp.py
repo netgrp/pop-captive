@@ -39,8 +39,8 @@ interfaces[25] = "multiroom"
 knet_api_base_url = "https://api.k-net.dk/v2/"
 
 # HTTP / HTTPS login site and hostname
-captive_scheme = "http"
-captive_hostname = "127.0.0.1"
+captive_scheme = "https"
+captive_hostname = "captive.pop.dk"
 # Semi-hardcoded configuration variables - END
 
 
