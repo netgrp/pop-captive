@@ -10,7 +10,9 @@ After=network.target
 User=pop-captive
 Group=nginx
 WorkingDirectory=/opt/pop-captive
-Environment="PATH=/opt/pop-captive/pop-captive-venv/bin KNET_API_USERNAME= KNET_API_PASSWORD="
+Environment="PATH=/opt/pop-captive/pop-captive-venv/bin"
+Environment="KNET_API_USERNAME="
+Environment="KNET_API_PASSWORD="
 ExecStart=/opt/pop-captive/pop-captive-venv/bin/gunicorn --workers 3 --bind unix:pop-captive.sock -m 007 wsgi:app
 
 [Install]
