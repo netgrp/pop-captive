@@ -85,6 +85,14 @@ def login_now():
         auth=HTTPBasicAuth(knet_api_username, knet_api_password)
     )
 
+    # Check if we got a response with the count
+    # If not we cannot check the login and we should fail right here
+    if user_response.json().get('count') is None:
+        return render_template('invalid-login.html',
+            title="Captive portal login failed",
+            retry_link=captive_scheme + "://" + captive_hostname + "/"
+            )
+
     # There should only be one response.
     # If less then no user was found.
     # If more then we cannot check password correctly.

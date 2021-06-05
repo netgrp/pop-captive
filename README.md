@@ -91,3 +91,7 @@ Relevant websites for SELinux:
 * https://command-not-found.com/audit2allow
 * https://docs.fedoraproject.org/en-US/Fedora/12/html/Security-Enhanced_Linux/sect-Security-Enhanced_Linux-Fixing_Problems-Allowing_Access_audit2allow.html
 * https://wiki.gentoo.org/wiki/SELinux/Tutorials/Creating_your_own_policy_module_file
+
+## Activate HTTPS with certbot
+
+    $ sudo certbot renew
