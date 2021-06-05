@@ -58,7 +58,6 @@ https://flask.palletsprojects.com/en/2.0.x/config/#configuring-from-environment-
 ## Make user for pop-captive flask application
 
     $ sudo useradd pop-captive
-    $ sudo usermod -aG wheel pop-captive
 
 ## Getting the base files right
 
@@ -75,6 +74,8 @@ https://flask.palletsprojects.com/en/2.0.x/config/#configuring-from-environment-
     $ pip install -r requirements.txt
 
 ## Install service file for Gunicorn. Run as normal user with sudo rights
+
+VERY IMPORTANT: Remember to add K-Net API Username and Password to the environment variables in the service file!
 
     $ sudo cp /opt/pop-captive/configuration-services/pop-captive.service /etc/systemd/system/pop-captive.service
     $ sudo systemctl enable --now pop-captive
@@ -95,3 +96,16 @@ Relevant websites for SELinux:
 ## Activate HTTPS with certbot
 
     $ sudo certbot renew
+
+## Prepare log file for use
+
+    $ sudo touch /var/log/pop-captive-access.log
+    $ sudo chown pop-captive:pop-captive /var/log/pop-captive-access.log
+
+## Allow captive portal to open the internet
+
+Edit the /etc/sudoers file. See the configuration-service/sudoers.md file for how to do this. We allow it to use sudo for specific commands without password
+
+## For debugging, follow the logs. Python errors will show up here.
+
+    $ journalctl -f

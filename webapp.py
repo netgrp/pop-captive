@@ -6,6 +6,7 @@ from requests.auth import HTTPBasicAuth
 import hashlib
 import re
 import os
+import ipaddress
 
 # Semi-hardcoded configuration variables - START
 interfaces = [None] * 26
@@ -56,9 +57,14 @@ def inject_now():
     return {'now': datetime.utcnow()}
 
 # Check hostname. If wrong send 511 for login required
+# Check for private IP. Only show captive portal on the inside of our network
 # TODO: Do not send 511 if user is logged in
+# TODO: Do not show captive portal login page from public IP's
+# X-Real-IP is because of proxy. This application will always use the same proxy so no need to check anything else
 @app.before_request
 def before_request():
+    if ipaddress.ip_address(request.headers['X-Real-IP']).is_private == False:
+        return render_template('public-ip.html')
     o = urlparse(request.base_url)
     host = o.hostname
     if o.hostname != captive_hostname:
@@ -85,11 +91,11 @@ def login_now():
         auth=HTTPBasicAuth(knet_api_username, knet_api_password)
     )
 
-    # Check if we got a response with the count
+    # Check if we got a 200 OK
     # If not we cannot check the login and we should fail right here
-    if user_response.json().get('count') is None:
+    if user_response.status_code != 200:
         return render_template('invalid-login.html',
-            title="Captive portal login failed",
+            title="Captive portal login failed Code:#1",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -98,7 +104,7 @@ def login_now():
     # If more then we cannot check password correctly.
     if user_response.json()['count'] != 1:
         return render_template('invalid-login.html',
-            title="Captive portal login failed",
+            title="Captive portal login failed Code:#2",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -111,7 +117,7 @@ def login_now():
     # We check that sha1 was used. If not we cannot check the password
     if pwd_parts[0] != 'sha1':
         return render_template('invalid-login.html',
-            title="Captive portal login failed",
+            title="Captive portal login failed Code:#3",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -123,7 +129,7 @@ def login_now():
     if hash_result != pwd_parts[2]:
         # Reject if login is invalid
         return render_template('invalid-login.html',
-            title="Captive portal login failed",
+            title="Captive portal login failed Code:#4",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -132,14 +138,15 @@ def login_now():
     # We need to capture xx as this is the index for that vlan in our settings.py
     # yyy is not important. Any device on that network (vlan) can login
     # yyy must be between 0 and 255, ensured by this regex.
+    # X-Real-IP is because of proxy. This application will always use the same proxy so no need to check anything else
     pattern = re.compile(r'^172\.16\.2([0-9]{2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]|[0-9])$')
-    match_ip_to_interface = int(pattern.match(request.remote_addr).group(1))
+    match_ip_to_interface = int(pattern.match(request.headers['X-Real-IP']).group(1))
 
     # Check valid interface number
     if match_ip_to_interface < 0 or match_ip_to_interface >= len(interfaces):
         # Reject because of invalid interface id
         return render_template('invalid-login.html',
-            title="Captive portal login failed",
+            title="Captive portal login failed Code:#5",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -156,8 +163,15 @@ def login_now():
     log_file.close()
 
     # TODO Read log again to be sure it was written correctly
+
     # Call nft command with sudo to open that network
-    os.system("nft 'add element captive open_interfaces { " + interface_to_open + " }'")
+    cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'add element captive open_interfaces { " + interface_to_open + " }'")
+    if os.WEXITSTATUS(cmd) != 0:
+        # Show failure if cmd to open interface did not work
+        return render_template('invalid-login.html',
+            title="Captive portal login ok, could not allow internet access Code:#6 ",
+            retry_link=captive_scheme + "://" + captive_hostname + "/"
+            )
 
     # Show success message for login, redirect to https://pop.dk/
     return render_template('valid-login-redirect.html',
