@@ -77,7 +77,7 @@ def before_request():
 @app.route('/', methods=['GET'])
 def show_login():
     return render_template('login.html',
-        title="Captive portal login"
+        title="Captive portal log ind"
         )
 
 # Perform login
@@ -85,6 +85,14 @@ def show_login():
 def login_now():
     username = request.form.get('username')
     password = request.form.get('password')
+    accept_tos = request.form.get('accept_tos')
+
+    # Check that terms and conditions (Terms of Service - ToC) has been accepted
+    if accept_tos != 'on':
+        return render_template('invalid-login.html',
+            title="Captive portal log ind mislykkedes Kode:#666",
+            retry_link=captive_scheme + "://" + captive_hostname + "/"
+            )
 
     # Check login with K-Net API, reject if invalid.
     user_response = requests.get(
@@ -96,7 +104,7 @@ def login_now():
     # If not we cannot check the login and we should fail right here
     if user_response.status_code != 200:
         return render_template('invalid-login.html',
-            title="Captive portal login failed Code:#1",
+            title="Captive portal log ind mislykkedes Kode:#1",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -106,7 +114,7 @@ def login_now():
     # TODO Handle lack of ['count'] key in a graceful way
     if user_response.json()['count'] != 1:
         return render_template('invalid-login.html',
-            title="Captive portal login failed Code:#2",
+            title="Captive portal log ind mislykkedes Kode:#2",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -119,7 +127,7 @@ def login_now():
     # We check that sha1 was used. If not we cannot check the password
     if pwd_parts[0] != 'sha1':
         return render_template('invalid-login.html',
-            title="Captive portal login failed Code:#3",
+            title="Captive portal log ind mislykkedes Kode:#3",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -131,7 +139,7 @@ def login_now():
     if hash_result != pwd_parts[2]:
         # Reject if login is invalid
         return render_template('invalid-login.html',
-            title="Captive portal login failed Code:#4",
+            title="Captive portal log ind mislykkedes Kode:#4",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -149,7 +157,7 @@ def login_now():
     if match_ip_to_interface < 0 or match_ip_to_interface >= len(interfaces):
         # Reject because of invalid interface id
         return render_template('invalid-login.html',
-            title="Captive portal login failed Code:#5",
+            title="Captive portal log ind mislykkedes Kode:#5",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
