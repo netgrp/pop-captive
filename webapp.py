@@ -77,7 +77,7 @@ def before_request():
 @app.route('/', methods=['GET'])
 def show_login():
     return render_template('login.html',
-        title="Captive portal log ind"
+        title="Captive portal - Log ind"
         )
 
 # Perform login
@@ -90,7 +90,7 @@ def login_now():
     # Check that terms and conditions (Terms of Service - ToC) has been accepted
     if accept_tos != 'on':
         return render_template('invalid-login.html',
-            title="Captive portal log ind mislykkedes Kode:#666",
+            title="Captive portal - Log ind mislykkedes Kode:#666",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -104,7 +104,7 @@ def login_now():
     # If not we cannot check the login and we should fail right here
     if user_response.status_code != 200:
         return render_template('invalid-login.html',
-            title="Captive portal log ind mislykkedes Kode:#1",
+            title="Captive portal - Log ind mislykkedes Kode:#1",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -114,7 +114,7 @@ def login_now():
     # TODO Handle lack of ['count'] key in a graceful way
     if user_response.json()['count'] != 1:
         return render_template('invalid-login.html',
-            title="Captive portal log ind mislykkedes Kode:#2",
+            title="Captive portal - Log ind mislykkedes Kode:#2",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -127,7 +127,7 @@ def login_now():
     # We check that sha1 was used. If not we cannot check the password
     if pwd_parts[0] != 'sha1':
         return render_template('invalid-login.html',
-            title="Captive portal log ind mislykkedes Kode:#3",
+            title="Captive portal - Log ind mislykkedes Kode:#3",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -139,7 +139,7 @@ def login_now():
     if hash_result != pwd_parts[2]:
         # Reject if login is invalid
         return render_template('invalid-login.html',
-            title="Captive portal log ind mislykkedes Kode:#4",
+            title="Captive portal - Log ind mislykkedes Kode:#4",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -157,7 +157,7 @@ def login_now():
     if match_ip_to_interface < 0 or match_ip_to_interface >= len(interfaces):
         # Reject because of invalid interface id
         return render_template('invalid-login.html',
-            title="Captive portal log ind mislykkedes Kode:#5",
+            title="Captive portal - Log ind mislykkedes Kode:#5",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
@@ -169,7 +169,10 @@ def login_now():
     save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + "," + username + "," + interface_to_open + "," + request.headers['X-Real-IP'] + "," + user_response.json()['results'][0]['vlan'] + "\n"
 
     # Save this string to log file
-    log_file = open('/var/log/pop-captive-access.log', 'a')
+    log_file_path = '/var/log/pop-captive/'
+    current_date = datetime.now().strftime("%Y%m%d")
+    log_filename = 'pop-captive-access-' + current_date + '.log'
+    log_file = open(log_file_path + log_filename, 'a')
     log_file.write(save_to_log)
     log_file.close()
 
@@ -180,11 +183,11 @@ def login_now():
     if os.WEXITSTATUS(cmd) != 0:
         # Show failure if cmd to open interface did not work
         return render_template('invalid-login.html',
-            title="Captive portal login ok, could not allow internet access Code:#6 ",
+            title="Captive portal - Log ind ok, kunne ikke give adgang til internet Code:#6 ",
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
     # Show success message for login, redirect to https://pop.dk/
     return render_template('valid-login-redirect.html',
-        title="Captive portal login accepted"
+        title="Captive portal - Log ind accepteret"
         )
