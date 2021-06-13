@@ -99,8 +99,13 @@ Relevant websites for SELinux:
 
 ## Prepare log file for use
 
-    $ sudo touch /var/log/pop-captive-access.log
-    $ sudo chown pop-captive:pop-captive /var/log/pop-captive-access.log
+    $ sudo mkdir -p /var/log/pop-captive
+    $ sudo chown -R pop-captive:pop-captive /var/log/pop-captive/
+
+## Setup job to delete old logs for legal and practical reasons (run as root)
+
+    $ sudo su
+    # echo "0 4 * * * pop-captive /opt/pop-captive/scripts/remove-old-logs.sh" >> /etc/crontab
 
 ## Allow captive portal to open the internet
 
@@ -111,12 +116,6 @@ Edit the /etc/sudoers file. See the configuration-service/sudoers.md file for ho
     $ journalctl -f
 
 ## TODO
-
-This is important before deployment:
-
-* Before full rollout:
-  * More info about responsiblity on login page
-  * Use boostrap theme for login formula. This looks a bit nicer
 
 
 Future work, improvments waiting to be implemented after some testing
@@ -131,7 +130,6 @@ Future work, improvments waiting to be implemented after some testing
   * Catch errors in a more general manner
 * Log files
   * Gunicorn logs save in a easy to access way with logrotate if required
-  * Do not store all access logs in one file. Name by date and perform logrotate to not keep data forever. E.g. format: /var/log/pop-captive/pop-captive-YYYYMMDD. Keeping 400 days of logs should be fine (Check current status for k-net when implementing)
   * Logrotate on any log this application generates!
   * Save info that can be used for debugging for normal errors to help users.
 * User experience: Redirect to intended page instead of https://pop.dk/
