@@ -19,12 +19,13 @@ Relevent resources that are used for the captive portal design:
 * Certbot - and certbot plugin for nginx for SSL certificate to make https work
 * git - to download the appliaction and install updates easier
 * virtualenv - For the python flask application, to keep them in a "container".
+* cron - To delete old logs via a cron job
 
 To install this in Fedora. We do not want firewalld
 
     sudo dnf mark install nftables
     sudo dnf remove firewalld
-    sudo dnf install dhcp nginx certbot certbot-nginx git python3-virtualenv
+    sudo dnf install dhcp nginx certbot certbot-nginx git python3-virtualenv cronie
 
 ## Forward in Linux kernel
 
@@ -46,6 +47,7 @@ Source: https://docs.fedoraproject.org/en-US/Fedora/18/html/Security_Guide/sect-
     sudo systemctl enable --now nginx
     sudo systemctl enable --now dhcpd
     sudo systemctl enable --now certbot-renew.timer
+    sudo systemctl enable --now crond.service
 
 ## Set environment variables (Should be possible in the .service file for Gunicorn 3)
 
@@ -104,8 +106,11 @@ Relevant websites for SELinux:
 
 ## Setup job to delete old logs for legal and practical reasons (run as root)
 
+Remember to make script executeable
+
     $ sudo su
     # echo "0 4 * * * pop-captive /opt/pop-captive/scripts/remove-old-logs.sh" >> /etc/crontab
+    # chmod +x /opt/pop-captive/scripts/remove-old-logs.sh
 
 ## Allow captive portal to open the internet
 
