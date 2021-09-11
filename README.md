@@ -116,6 +116,12 @@ Remember to make script executeable
 
 Edit the /etc/sudoers file. See the configuration-service/sudoers.md file for how to do this. We allow it to use sudo for specific commands without password
 
+## Automatic close interface when device is disconnected
+
+Perform a ARP check every minute and close interface if no device is connected to that network. Use the close-inactive.py script, run as the captive portal user. Add the following crontab job
+
+    * * * * * python /opt/pop-captive/close-inactive.py >/dev/null 2>&1
+
 ## For debugging, follow the logs. Python errors will show up here.
 
     $ journalctl -f
@@ -125,8 +131,6 @@ Edit the /etc/sudoers file. See the configuration-service/sudoers.md file for ho
 
 Future work, improvments waiting to be implemented after some testing
 
-* Let web portal be aware of active networks:
-  * Automatic log out if device disconnected. Send ARP requests every 1 minute and log user out if no response in some given time.
 * Gracefull error handeling
   * Do not leak error codes in the same way as now
   * Handle missing keys such as ['count'] in a gracefull manner
