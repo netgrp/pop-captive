@@ -122,6 +122,8 @@ Perform a ARP check every minute and close interface if no device is connected t
 
     * * * * * python /opt/pop-captive/close-inactive.py >/dev/null 2>&1
 
+Add with e.g. <code>crontab -e</code> when logged in as the captive portal user. The line above will run every minute.
+
 ## For debugging, follow the logs. Python errors will show up here.
 
     $ journalctl -f
