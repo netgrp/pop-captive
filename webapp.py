@@ -7,6 +7,8 @@ import hashlib
 import re
 import os
 import ipaddress
+import json
+import subprocess
 
 # Semi-hardcoded configuration variables - START
 interfaces = [None] * 26
@@ -56,6 +58,60 @@ app = Flask(__name__)
 def inject_now():
     return {'now': datetime.utcnow()}
 
+# Get current state, who is logged in? This is defined by what interfaces that are open
+# TODO: Cache result for request
+def get_open_interfaces():
+    # Get the list of open interfaces from nft
+    result_raw = subprocess.run(['/usr/bin/sudo', '/usr/sbin/nft', '-j', 'list', 'set', 'ip', 'captive', 'open_interfaces'], stdout=subprocess.PIPE)
+
+    # Get the output and decode it
+    result_json = json.loads(result_raw.stdout)
+
+    # Prepare list for open interfaces
+    open_interfaces = []
+
+    # Extract the interface names for the open interfaces
+    for element in result_json['nftables'][1]['set']['elem']:
+        open_interfaces.append(x['elem']['val'])
+
+    return open_interfaces
+
+# Get interface for current request
+# TODO: Cache result for request
+def get_current_interface():
+    # TODO: Use https://docs.python.org/3/library/ipaddress.html instead of regex here
+    # If we are here we have a valid login. Let us open the internet!
+    # Check what vlan we are on from the IP address 172.16.2xx.yyy
+    # We need to capture xx as this is the index for that vlan in our settings.py
+    # yyy is not important. Any device on that network (vlan) can login
+    # yyy must be between 0 and 255, ensured by this regex.
+    # X-Real-IP is because of proxy. This application will always use the same proxy so no need to check anything else
+    pattern = re.compile(r'^172\.16\.2([0-9]{2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]|[0-9])$')
+    match_ip_to_interface = int(pattern.match(request.headers['X-Real-IP']).group(1))
+
+    # Check valid interface number
+    if match_ip_to_interface < 0 or match_ip_to_interface >= len(interfaces):
+        # Reject because of invalid interface id
+        return render_template('public-ip.html')
+
+    # Current interface is:
+    return interfaces[match_ip_to_interface]
+
+# Check if logged in already
+def is_current_interface_logged_in():
+    # Get current list of open interfaces
+    open_interfaces = get_open_interfaces()
+
+    # Get current interface name
+    current_interface = get_current_interface()
+
+    # If current_interface is in the list of open interfaces the current interface is logged in
+    if current_interface in open_interfaces:
+        return True
+
+    # If not, then nobody is logged in
+    return False
+
 
 # TODO: Do not send 511 if user is logged in
 # X-Real-IP is because of proxy. This application will always use the same proxy so no need to check anything else
@@ -69,19 +125,28 @@ def before_request():
     o = urlparse(request.base_url)
     host = o.hostname
     if o.hostname != captive_hostname:
-        return render_template('login-required-redirect.html',
-            redirect_host=captive_scheme + "://" + captive_hostname + "/"), 511
+        # Only send 511 if interface is not logged in.
+        if is_current_interface_logged_in() == False:
+            return render_template('login-required-redirect.html',
+                redirect_host=captive_scheme + "://" + captive_hostname + "/"), 511
 
 
 # Show login form
 @app.route('/', methods=['GET'])
-def show_login():
+def show_login_logout():
+    # Offer logout if interface is logged in
+    if is_current_interface_logged_in():
+        return render_template('logud.html',
+            title="Captive portal - Log ud"
+            )
+
+    # Otherwise interface is not yet logged in, Offer login
     return render_template('login.html',
         title="Captive portal - Log ind"
         )
 
 # Perform login
-@app.route('/', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login_now():
     username = request.form.get('username')
     password = request.form.get('password')
@@ -143,26 +208,8 @@ def login_now():
             retry_link=captive_scheme + "://" + captive_hostname + "/"
             )
 
-    # TODO: Use https://docs.python.org/3/library/ipaddress.html instead of regex here
-    # If we are here we have a valid login. Let us open the internet!
-    # Check what vlan we are on from the IP address 172.16.2xx.yyy
-    # We need to capture xx as this is the index for that vlan in our settings.py
-    # yyy is not important. Any device on that network (vlan) can login
-    # yyy must be between 0 and 255, ensured by this regex.
-    # X-Real-IP is because of proxy. This application will always use the same proxy so no need to check anything else
-    pattern = re.compile(r'^172\.16\.2([0-9]{2})\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]|[0-9])$')
-    match_ip_to_interface = int(pattern.match(request.headers['X-Real-IP']).group(1))
-
-    # Check valid interface number
-    if match_ip_to_interface < 0 or match_ip_to_interface >= len(interfaces):
-        # Reject because of invalid interface id
-        return render_template('invalid-login.html',
-            title="Captive portal - Log ind mislykkedes Kode:#5",
-            retry_link=captive_scheme + "://" + captive_hostname + "/"
-            )
-
     # Inteface to open is:
-    interface_to_open = interfaces[match_ip_to_interface]
+    interface_to_open = get_current_interface()
 
     # Make string to save in log file username + vlan id?
     # TODO Add timezone to timestamp. For now it is as system time
@@ -190,4 +237,39 @@ def login_now():
     # Show success message for login, redirect to https://pop.dk/
     return render_template('valid-login-redirect.html',
         title="Captive portal - Log ind accepteret"
+        )
+
+# Perform logout
+@app.route('/logout', methods=['POST'])
+def logout_now():
+    # Inteface to close is:
+    interface_to_close = get_current_interface()
+
+    # Make string to save in log file username + vlan id?
+    # TODO Add timezone to timestamp. For now it is as system time
+    save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ",system_close_on_logout_request," + interface_to_close + "," + request.headers['X-Real-IP'] + ",\n"
+
+    # Save this string to log file
+    log_file_path = '/var/log/pop-captive/'
+    current_date = datetime.now().strftime("%Y%m%d")
+    log_filename = 'pop-captive-access-' + current_date + '.log'
+    log_file = open(log_file_path + log_filename, 'a')
+    log_file.write(save_to_log)
+    log_file.close()
+
+    # TODO Read log again to be sure it was written correctly
+
+    # Call nft command with sudo to open that network
+    cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'delete element captive open_interfaces { " + interface_to_close + " }'")
+    if os.WEXITSTATUS(cmd) != 0:
+        # Show failure if cmd to open interface did not work
+        return render_template('error-logout.html',
+            title="Captive portal - Log ud mislykkedes ",
+            retry_link=captive_scheme + "://" + captive_hostname + "/"
+            )
+
+    # Show success message for login, redirect to https://pop.dk/
+    return render_template('valid-logout.html',
+        title="Captive portal - Log ud accepteret",
+            login_link=captive_scheme + "://" + captive_hostname + "/"
         )
