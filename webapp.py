@@ -130,6 +130,9 @@ def before_request():
             return render_template('login-required-redirect.html',
                 redirect_host=captive_scheme + "://" + captive_hostname + "/"), 511
 
+        # Otherwise return a normal 404
+        abort(404)
+
 
 # Show login form
 @app.route('/', methods=['GET'])
