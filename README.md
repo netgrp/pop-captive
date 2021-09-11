@@ -126,13 +126,11 @@ Edit the /etc/sudoers file. See the configuration-service/sudoers.md file for ho
 Future work, improvments waiting to be implemented after some testing
 
 * Let web portal be aware of active networks:
-  * Do not send 511 if user is logged in
-  * Log out option to end 8 hour session early
   * Automatic log out if device disconnected. Send ARP requests every 1 minute and log user out if no response in some given time.
 * Gracefull error handeling
   * Do not leak error codes in the same way as now
   * Handle missing keys such as ['count'] in a gracefull manner
-  * Catch errors in a more general manner
+  * Catch errors in a more general manner (send e-mail?)
 * Log files
   * Gunicorn logs save in a easy to access way with logrotate if required
   * Logrotate on any log this application generates!
@@ -150,3 +148,4 @@ Future work, improvments waiting to be implemented after some testing
   * Be sure to check out: https://docs.gunicorn.org/en/stable/deploy.html
 * More complete instructions for nginx setup, including HTTPS setup.
 * Heartbeat url for status.pop.dk: Say OK if everything seems to work as it should
+* Make it possible to show terms and conditions when logged in
