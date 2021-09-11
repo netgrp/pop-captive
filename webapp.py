@@ -136,7 +136,7 @@ def before_request():
 def show_login_logout():
     # Offer logout if interface is logged in
     if is_current_interface_logged_in():
-        return render_template('logud.html',
+        return render_template('logout.html',
             title="Captive portal - Log ud"
             )
 
