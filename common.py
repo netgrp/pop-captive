@@ -43,7 +43,8 @@ def get_open_interfaces():
     open_interfaces = []
 
     # Extract the interface names for the open interfaces
-    for element in result_json['nftables'][1]['set']['elem']:
-        open_interfaces.append(element['elem']['val'])
+    if 'elem' in result_json['nftables'][1]['set']:
+        for element in result_json['nftables'][1]['set']['elem']:
+            open_interfaces.append(element['elem']['val'])
 
     return open_interfaces
