@@ -133,6 +133,8 @@ Add with e.g. <code>crontab -e</code> when logged in as the captive portal user.
 
 Future work, improvments waiting to be implemented after some testing
 
+* Send some notification when application fails. Could be a Heartbeat call that run all functions.
+  * Also, if possible, send E-Mail on error.
 * Gracefull error handeling
   * Do not leak error codes in the same way as now
   * Handle missing keys such as ['count'] in a gracefull manner
