@@ -57,3 +57,17 @@ for interface_name in open_interfaces:
         # Call nft command with sudo to open that network
         # TODO how to handle if this call fails?
         cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'delete element captive open_interfaces { " + interface_name + " }'")
+        if os.WEXITSTATUS(cmd) != 0:
+            # Log if interface could not be closed
+
+            # Make string to save in log file username + vlan id?
+            # TODO Add timezone to timestamp. For now it is as system time
+            save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ",system_failure_could_not_close_network," + interface_name + ",no-ip-arp,\n"
+
+            # Save this string to log file
+            log_file_path = '/var/log/pop-captive/'
+            current_date = datetime.now().strftime("%Y%m%d")
+            log_filename = 'pop-captive-access-' + current_date + '.log'
+            log_file = open(log_file_path + log_filename, 'a')
+            log_file.write(save_to_log)
+            log_file.close()

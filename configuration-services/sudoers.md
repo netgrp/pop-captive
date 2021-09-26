@@ -61,3 +61,9 @@ Append this to the this file: /etc/sudoers
     pop-captive pop-supermicro = (root) NOPASSWD: /usr/sbin/nft delete element captive open_interfaces { kitchen_y }
     pop-captive pop-supermicro = (root) NOPASSWD: /usr/sbin/nft delete element captive open_interfaces { falladen }
     pop-captive pop-supermicro = (root) NOPASSWD: /usr/sbin/nft delete element captive open_interfaces { multiroom }
+
+    pop-captive pop-supermicro = (root) NOPASSWD: /usr/sbin/nft add element captive open_ips_lan_party { 172.16.190.[0-9][0-9] }
+    pop-captive pop-supermicro = (root) NOPASSWD: /usr/sbin/nft add element captive open_ips_lan_party { 172.16.190.[0-2][0-9][0-9] }
+
+    pop-captive pop-supermicro = (root) NOPASSWD: /usr/sbin/nft delete element captive open_ips_lan_party { 172.16.190.[0-9][0-9] }
+    pop-captive pop-supermicro = (root) NOPASSWD: /usr/sbin/nft delete element captive open_ips_lan_party { 172.16.190.[0-2][0-9][0-9] }
