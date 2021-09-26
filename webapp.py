@@ -30,9 +30,9 @@ def inject_now():
 
 # Check if logged in already
 # Check by IP
-def is_ip_logged_in():
+def is_ip_logged_in(ip_to_check):
     # If current ip is in the list of open ips the current ip is logged in
-    if request.headers['X-Real-IP'] in get_logged_in_ips():
+    if ip_to_check in get_logged_in_ips():
         return True
 
     # If not, then nobody is logged in
@@ -52,7 +52,7 @@ def before_request():
     host = o.hostname
     if o.hostname != captive_hostname:
         # Only send 511 if interface is not logged in.
-        if is_ip_logged_in() == False:
+        if is_ip_logged_in(request.headers['X-Real-IP']) == False:
             return render_template('login-required-redirect.html',
                 redirect_host=captive_scheme + "://" + captive_hostname + "/"), 511
 
@@ -64,7 +64,7 @@ def before_request():
 @app.route('/', methods=['GET'])
 def show_login_logout():
     # Offer logout if interface is logged in
-    if is_ip_logged_in():
+    if is_ip_logged_in(request.headers['X-Real-IP']):
         return render_template('logout.html',
             title="Lan captive portal - Log ud"
             )
