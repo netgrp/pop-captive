@@ -52,7 +52,7 @@ def before_request():
     host = o.hostname
     if o.hostname != captive_hostname:
         # Only send 511 if interface is not logged in.
-        if is_current_interface_logged_in() == False:
+        if is_ip_logged_in() == False:
             return render_template('login-required-redirect.html',
                 redirect_host=captive_scheme + "://" + captive_hostname + "/"), 511
 
@@ -64,7 +64,7 @@ def before_request():
 @app.route('/', methods=['GET'])
 def show_login_logout():
     # Offer logout if interface is logged in
-    if is_current_interface_logged_in():
+    if is_ip_logged_in():
         return render_template('logout.html',
             title="Lan captive portal - Log ud"
             )
@@ -169,9 +169,6 @@ def login_now():
 # Perform logout
 @app.route('/logout', methods=['POST'])
 def logout_now():
-    # Inteface to close is:
-    interface_to_close = get_current_interface()
-
     # Make string to save in log file username + vlan id?
     # TODO Add timezone to timestamp. For now it is as system time
     save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ",system_close_on_logout_request,lan_party," + request.headers['X-Real-IP'] + ",\n"
