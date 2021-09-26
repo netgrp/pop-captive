@@ -7,7 +7,7 @@ import hashlib
 import re
 import os
 import ipaddress
-from common import interfaces, get_logged_in_ips
+from common import get_logged_in_ips
 
 knet_api_base_url = "https://api.k-net.dk/v2/"
 
