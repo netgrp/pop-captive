@@ -1,5 +1,5 @@
 # Import everything from our webapp
-from common import get_open_interfaces, interfaces
+from common import get_logged_in_ips
 import re
 import subprocess
 import sys
@@ -7,26 +7,19 @@ from datetime import datetime
 import os
 
 # This is meant to run as a cron job every minute on the captive portal server
-# This will check all open interfaces and close any open interface if arp entry expires in linux. Typical cache is 60 secs.
+# This will check all open ips and close any open ips if arp entry expires in linux. Typical cache is 60 secs.
 
 # How does it work? We expect a format like this for some active interface
-# $ arp -i kitchen_o -a
-# ? (172.16.214.100) at ff:ff:ff:ff:ff:ff [ether] on kitchen_o
-
-# We check that we get an IP from the right interface, with a known mac.
+# $ ip neigh show dev lan_party to 172.16.190.10
+# 172.16.190.10 lladdr ff:ff:ff:ff:ff:ff REACHABLE
 
 
-open_interfaces = get_open_interfaces()
-
-for interface_name in open_interfaces:
-    # Get interface ID from name (with zero padding)
-    interface_id = str(interfaces.index(interface_name)).zfill(2)
-
+for ip in get_logged_in_ips():
     # Prepare regex check
-    pattern = re.compile(r'^\? \(172\.16\.2' + interface_id + '\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\) at ([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2}) \[ether\] on ' + interface_name + '$')
+    pattern = re.compile(r'^\?' + re.escape(ip) + ' lladdr ([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2}) REACHABLE')
 
     # Get current arp status for this interface
-    result_raw = subprocess.run(['/usr/sbin/arp', '-i', interface_name, '-a'], stdout=subprocess.PIPE)
+    result_raw = subprocess.run(['/usr/sbin/ip', 'neigh', 'show', 'dev', 'lan_party', 'to', ip], stdout=subprocess.PIPE)
 
     # Set status to be inactive
     is_active = False
@@ -42,7 +35,7 @@ for interface_name in open_interfaces:
     if is_active == False:
         # Make string to save in log file username + vlan id?
         # TODO Add timezone to timestamp. For now it is as system time
-        save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ",system_automatic_close_arp_check_failed," + interface_name + ",no-ip-arp,\n"
+        save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ",system_automatic_close_arp_check_failed,lan_party," + ip + ",\n"
 
         # Save this string to log file
         log_file_path = '/var/log/pop-captive/'
@@ -56,13 +49,13 @@ for interface_name in open_interfaces:
 
         # Call nft command with sudo to open that network
         # TODO how to handle if this call fails?
-        cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'delete element captive open_interfaces { " + interface_name + " }'")
+        cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'delete element captive open_ips_lan_party { " + ip + " }'")
         if os.WEXITSTATUS(cmd) != 0:
             # Log if interface could not be closed
 
             # Make string to save in log file username + vlan id?
             # TODO Add timezone to timestamp. For now it is as system time
-            save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ",system_failure_could_not_close_network," + interface_name + ",no-ip-arp,\n"
+            save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ",system_failure_could_not_close_network,lan_party," + ip + ",\n"
 
             # Save this string to log file
             log_file_path = '/var/log/pop-captive/'
