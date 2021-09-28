@@ -16,7 +16,7 @@ import os
 
 for ip in get_logged_in_ips():
     # Prepare regex check
-    pattern = re.compile(r'^\?' + re.escape(ip) + ' lladdr ([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2}) REACHABLE')
+    pattern = re.compile(r'^' + re.escape(ip) + ' lladdr ([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2}) REACHABLE$')
 
     # Get current arp status for this interface
     result_raw = subprocess.run(['/usr/sbin/ip', 'neigh', 'show', 'dev', 'lan_party', 'to', ip], stdout=subprocess.PIPE)
