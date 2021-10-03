@@ -8,6 +8,8 @@ import re
 import os
 import ipaddress
 from common import get_logged_in_ips
+import subprocess
+import json
 
 knet_api_base_url = "https://api.k-net.dk/v2/"
 
@@ -39,12 +41,36 @@ def is_ip_logged_in(ip_to_check):
     return False
 
 
+# Get time left on login
+# Assumption: This function is only called for IP's that are logged in
+def get_time_left(ip_to_check):
+    # Get the list of open interfaces from nft
+    result_raw = subprocess.run(['/usr/bin/sudo', '/usr/sbin/nft', '-j', 'list', 'set', 'ip', 'captive', 'open_ips_lan_party'], stdout=subprocess.PIPE)
+
+    # Get the output and decode it
+    result_json = json.loads(result_raw.stdout)
+
+    # Extract the interface names for the open interfaces
+    if 'elem' in result_json['nftables'][1]['set']:
+        # Find the IP
+        for element in result_json['nftables'][1]['set']['elem']:
+            if element['elem']['val'] == ip_to_check:
+                # Got it
+                return element['elem']['expires']
+
+    # Just return 0 if nothing is found
+    return 0
+
+
 # TODO: Do not send 511 if user is logged in
 # X-Real-IP is because of proxy. This application will always use the same proxy so no need to check anything else
 @app.before_request
 def before_request():
     # Check for private IP. Only show Lan captive portal on the inside of our network
-    if ipaddress.ip_address(request.headers['X-Real-IP']).is_private == False:
+
+    # Network for this captive portal
+    lan_party_network = ipaddress.ip_network('185.140.1.0/24')
+    if ipaddress.ip_address(request.headers['X-Real-IP']) not in lan_party_network:
         return render_template('public-ip.html')
 
     # Check hostname. If wrong send 511 for login required
@@ -58,6 +84,29 @@ def before_request():
 
         # Otherwise return a normal 404
         abort(404)
+
+
+# rfc8908 Captive Portal API
+@app.route('/api', methods=['GET'])
+def captive_portal_api():
+    login_page = captive_scheme + "://" + captive_hostname + "/"
+
+    # Send response to show captive portal if not logged in
+    if is_ip_logged_in(request.headers['X-Real-IP']) == False:
+        return {
+            "captive": "true",
+            "user-portal-url": login_page
+        }
+
+    # Otherwise send status about the current session
+    return {
+        "captive": "false",
+        "user-portal-url": login_page,
+        "venue-info-url": "https://pop.dk/udvalg/netvaerksudvalget",
+        "seconds-remaining": get_time_left(request.headers['X-Real-IP']),
+        "can-extend-session": "true"
+    }
+
 
 
 # Show login form

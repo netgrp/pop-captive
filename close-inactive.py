@@ -10,16 +10,17 @@ import os
 # This will check all open ips and close any open ips if arp entry expires in linux. Typical cache is 60 secs.
 
 # How does it work? We expect a format like this for some active interface
-# $ ip neigh show dev lan_party to 172.16.190.10
-# 172.16.190.10 lladdr ff:ff:ff:ff:ff:ff REACHABLE
+# $ arp -i lan_party -a 185.140.1.10
+# ? (185.140.1.10) at ff:ff:ff:ff:ff:ff [ether] on lan_party
 
 
 for ip in get_logged_in_ips():
     # Prepare regex check
     pattern = re.compile(r'^' + re.escape(ip) + ' lladdr ([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2}) REACHABLE$')
+    pattern = re.compile(r'^\? \(' + re.escape(ip) + '\) at ([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2}) \[ether\] on lan_party$')
 
     # Get current arp status for this interface
-    result_raw = subprocess.run(['/usr/sbin/ip', 'neigh', 'show', 'dev', 'lan_party', 'to', ip], stdout=subprocess.PIPE)
+    result_raw = subprocess.run(['/usr/sbin/arp', '-i', 'lan_party', '-a', ip], stdout=subprocess.PIPE)
 
     # Set status to be inactive
     is_active = False

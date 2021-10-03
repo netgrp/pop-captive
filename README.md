@@ -5,9 +5,16 @@ Build to use nftables for as much as possible with a minimal web app on top to h
 
 The captive portal does follow RFC6585. We only redirect port 80 for the captive portal and use code 511 to avoid cache poision/malfunction.
 
+Furthermore, to improve discovery of the captive portal we also support discovery via a DHCP option 114 (see RFC8910) and a Captive Portal API as defined in RFC8908.
+
 Relevent resources that are used for the captive portal design:
 * https://tools.ietf.org/html/rfc6585#section-6
 * https://evertpot.com/http/511-network-authentication-required
+* https://datatracker.ietf.org/doc/html/rfc8908
+* https://datatracker.ietf.org/doc/html/rfc8910
+* https://developer.android.com/about/versions/11/features/captive-portal
+* https://developer.apple.com/news/?id=q78sq5rv
+
 
 ## Software/Packages required. We use Fedora 34 as a base
 
