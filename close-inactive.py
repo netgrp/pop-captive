@@ -62,7 +62,7 @@ for interface_name in open_interfaces:
 
             # Make string to save in log file username + vlan id?
             # TODO Add timezone to timestamp. For now it is as system time
-            save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ",system_failure_could_not_close_network,lan_party," + ip + ",\n"
+            save_to_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ",system_failure_could_not_close_network," + interface_name + ",no-ip-arp,\n"
 
             # Save this string to log file
             log_file_path = '/var/log/pop-captive/'
