@@ -157,3 +157,6 @@ Future work, improvments waiting to be implemented after some testing
 * More complete instructions for nginx setup, including HTTPS setup.
 * Heartbeat url for status.pop.dk: Say OK if everything seems to work as it should
 * Make it possible to show terms and conditions when logged in
+* Implement RFC8908 and RFC8910 support
+  * see "lan_party" branch for version based on ip address instead of interface for referance.
+  * https://github.com/eKristensen/pop-captive/commit/3b28340a3f7aa587e7e4fd2ee6b6589f9a22122b
