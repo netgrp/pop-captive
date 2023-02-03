@@ -34,7 +34,7 @@ interfaces[25] = "multiroom"
 # TODO: Cache result for request
 def get_open_interfaces():
     # Get the list of open interfaces from nft
-    result_raw = subprocess.run(['/usr/bin/sudo', '/usr/sbin/nft', '-j', 'list', 'set', 'ip', 'captive', 'open_interfaces'], stdout=subprocess.PIPE)
+    result_raw = subprocess.run(['/usr/bin/sudo', '/usr/sbin/nft', '-j', 'list', 'set', 'inet', 'captive', 'open_interfaces'], stdout=subprocess.PIPE)
 
     # Get the output and decode it
     result_json = json.loads(result_raw.stdout)
