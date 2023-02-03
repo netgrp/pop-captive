@@ -56,7 +56,7 @@ for interface_name in open_interfaces:
 
         # Call nft command with sudo to open that network
         # TODO how to handle if this call fails?
-        cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'delete element captive open_interfaces { " + interface_name + " }'")
+        cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'delete element inet captive open_interfaces { " + interface_name + " }'")
         if os.WEXITSTATUS(cmd) != 0:
             # Log if interface could not be closed
 

@@ -181,7 +181,7 @@ def login_now():
     # TODO Read log again to be sure it was written correctly
 
     # Call nft command with sudo to open that network
-    cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'add element captive open_interfaces { " + interface_to_open + " }'")
+    cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'add element inet captive open_interfaces { " + interface_to_open + " }'")
     if os.WEXITSTATUS(cmd) != 0:
         # Show failure if cmd to open interface did not work
         return render_template('invalid-login.html',
@@ -215,7 +215,7 @@ def logout_now():
     # TODO Read log again to be sure it was written correctly
 
     # Call nft command with sudo to open that network
-    cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'delete element captive open_interfaces { " + interface_to_close + " }'")
+    cmd = os.system("/usr/bin/sudo /usr/sbin/nft 'delete element inet captive open_interfaces { " + interface_to_close + " }'")
     if os.WEXITSTATUS(cmd) != 0:
         # Show failure if cmd to open interface did not work
         return render_template('error-logout.html',
